@@ -213,6 +213,7 @@ const nextConfig = {
       '@hyperlane-xyz/utils',
       '@hyperlane-xyz/widgets',
     ],
+    ...(process.env.CI ? { cpus: 1 } : {}),
   },
 
 };
