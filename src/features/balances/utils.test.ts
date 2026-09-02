@@ -1,3 +1,4 @@
+import type { MultiProtocolProvider } from '@hyperlane-xyz/sdk';
 import { describe, expect, test } from 'vitest';
 
 import type { BalanceToken } from './types';
@@ -50,6 +51,26 @@ describe('resolveCoinGeckoId', () => {
 
   test('defaults decimals to 18 when token metadata is missing', () => {
     expect(resolveCoinGeckoId(component({}), new Map())).toEqual({
+      coinGeckoId: undefined,
+      decimals: 18,
+    });
+  });
+
+  test('falls back to chain gas currency for native fee tokens', () => {
+    const multiProvider = {
+      tryGetChainName: () => 'optimism',
+      tryGetChainMetadata: () => ({
+        gasCurrencyCoinGeckoId: 'ethereum',
+        nativeToken: { decimals: 18 },
+      }),
+    } as unknown as MultiProtocolProvider;
+    const native = component({ tokenAddress: '0x0000000000000000000000000000000000000000' });
+
+    expect(resolveCoinGeckoId(native, new Map(), multiProvider)).toEqual({
+      coinGeckoId: 'ethereum',
+      decimals: 18,
+    });
+    expect(resolveCoinGeckoId(component({}), new Map(), multiProvider)).toEqual({
       coinGeckoId: undefined,
       decimals: 18,
     });

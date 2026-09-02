@@ -2,6 +2,7 @@ import { ChainMap } from '@hyperlane-xyz/sdk';
 import { ProtocolType } from '@hyperlane-xyz/utils';
 
 import { ADDRESS_BLACKLIST } from './blacklist';
+import { EXA_TOKEN_ADDRESS } from './exa';
 
 const isDevMode = process.env.NODE_ENV === 'development';
 const version = process.env.NEXT_PUBLIC_VERSION || '3.0.0';
@@ -64,13 +65,13 @@ export const config: Config = Object.freeze({
   enableExplorerLink: true,
   explorerApiUrl,
   relayApiUrl,
-  defaultTransferOriginToken: 'bsc-0x0000000000000000000000000000000000000000',
-  defaultTransferDestinationToken: 'base-0x0000000000000000000000000000000000000000',
+  defaultTransferOriginToken: `optimism-${EXA_TOKEN_ADDRESS}`,
+  defaultTransferDestinationToken: `base-${EXA_TOKEN_ADDRESS}`,
   isDevMode,
   registryUrl,
   registryBranch,
   registryProxyUrl,
-  showTipBox: true,
+  showTipBox: false,
   version,
   transferBlacklist,
   walletConnectProjectId,
@@ -90,24 +91,7 @@ export const config: Config = Object.freeze({
   ccsUrl,
   permit2ExpirationSeconds,
   defaultSlippageBps,
-  featuredChains: [
-    'ethereum',
-    'base',
-    'arbitrum',
-    'solanamainnet',
-    'optimism',
-    'bsc',
-    'polygon',
-    'unichain',
-    'avalanche',
-    'tron',
-    'hyperevm',
-    'linea',
-    'worldchain',
-    'eclipsemainnet',
-    'ink',
-    'monad',
-  ],
+  featuredChains: ['optimism', 'base'],
 });
 
 export function parseFiniteEnvNumber(name: string, fallback: number): number {

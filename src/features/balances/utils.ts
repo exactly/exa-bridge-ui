@@ -1,5 +1,5 @@
 import type { MultiProtocolProvider } from '@hyperlane-xyz/sdk';
-import { fromWei, fromWeiRounded } from '@hyperlane-xyz/utils';
+import { fromWei, fromWeiRounded, isZeroishAddress } from '@hyperlane-xyz/utils';
 
 import type { BalanceToken } from './types';
 import { balanceTokenKey, getBalanceTokenKey } from './types';
@@ -34,9 +34,20 @@ export function getUsdValue(
 export function resolveCoinGeckoId(
   component: PricedFeeComponent,
   tokenMap: Map<string, BalanceToken>,
+  multiProvider?: MultiProtocolProvider,
 ): { coinGeckoId: string | undefined; decimals: number } {
   const t = tokenMap.get(balanceTokenKey(component.chainId, component.tokenAddress));
-  return { coinGeckoId: t?.coinGeckoId, decimals: t?.decimals ?? 18 };
+  if (t) return { coinGeckoId: t.coinGeckoId, decimals: t.decimals };
+
+  if (multiProvider && isZeroishAddress(component.tokenAddress)) {
+    const chainName = multiProvider.tryGetChainName(component.chainId);
+    const meta = chainName ? multiProvider.tryGetChainMetadata(chainName) : undefined;
+    return {
+      coinGeckoId: meta?.gasCurrencyCoinGeckoId,
+      decimals: meta?.nativeToken?.decimals ?? 18,
+    };
+  }
+  return { coinGeckoId: undefined, decimals: 18 };
 }
 
 // Returns null if any component is unpriced — a partial sum would
@@ -45,10 +56,11 @@ export function getTotalFeeUsd(
   components: PricedFeeComponent[],
   tokenMap: Map<string, BalanceToken>,
   prices: Record<string, number>,
+  multiProvider?: MultiProtocolProvider,
 ): number | null {
   let total = 0;
   for (const c of components) {
-    const { coinGeckoId, decimals } = resolveCoinGeckoId(c, tokenMap);
+    const { coinGeckoId, decimals } = resolveCoinGeckoId(c, tokenMap, multiProvider);
     if (!coinGeckoId) return null;
     const price = prices[coinGeckoId];
     if (price == null) return null;

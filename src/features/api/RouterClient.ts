@@ -1,6 +1,6 @@
 // Ported from universal-router-engine/src/api/client.ts.
-import { config } from '../../consts/config';
 import { logger } from '../../utils/logger';
+import { LocalExaEngine } from '../exa/engine';
 import {
   ChainsResponseSchema,
   AvailableRoutesResponseSchema,
@@ -183,4 +183,4 @@ export class RouterClient {
 }
 
 // Singleton — keep the same client across hooks/queries.
-export const routerClient = new RouterClient(config.routerApiUrl);
+export const routerClient = new LocalExaEngine();

@@ -111,15 +111,26 @@ describe('chainSearch', () => {
 
   describe('sort', () => {
     it('sorts featured chains first by default', () => {
-      const result = search({});
+      const result = chainSearch({
+        data: [
+          ...chains,
+          makeChain({ name: 'base', displayName: 'Base', chainId: 8453 }),
+          makeChain({ name: 'optimism', displayName: 'Optimism', chainId: 10 }),
+        ],
+        query: '',
+        sort: defaultSortState,
+        filter: defaultFilterState,
+      });
       const names = result.filter((c) => !c.disabled).map((c) => c.name);
       expect(names).toEqual([
-        'ethereum',
+        'optimism',
+        'base',
         'arbitrum',
-        'solanamainnet',
-        'polygon',
         'cosmoshub',
+        'ethereum',
+        'polygon',
         'sepolia',
+        'solanamainnet',
       ]);
     });
 

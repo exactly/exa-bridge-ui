@@ -14,6 +14,7 @@ import { routerClient } from './api/RouterClient';
 import type { RouteResponse } from './api/types';
 import { assembleChainAddresses } from './chains/addresses';
 import { assembleChainMetadata } from './chains/metadata';
+import { ExaRoute } from './exa/engine';
 import type { UiToken } from './tokens/types';
 import { getTokenKey as getTransferTokenKey } from './tokens/utils';
 import {
@@ -638,6 +639,7 @@ async function initAppContext({
         loadRegistryWarpRoutes(currentRegistry),
       ]);
     const multiProvider = new MultiProtocolProvider(chainMetadataWithOverrides);
+    routerClient.setMultiProvider(multiProvider);
 
     initE2EStateIfEnabled();
     markE2ERuntimeReady();
@@ -645,7 +647,7 @@ async function initAppContext({
       registry: currentRegistry,
       chainMetadata,
       chainAddresses,
-      registryWarpRoutes,
+      registryWarpRoutes: ExaRoute(registryWarpRoutes),
       multiProvider,
     };
   } catch (error) {
