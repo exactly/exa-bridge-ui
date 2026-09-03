@@ -47,18 +47,18 @@ export function FeeSectionButton({ feeBreakdown, isLoading, inputUsd }: Props) {
   const feeCoinGeckoIds = useMemo(() => {
     const ids = new Set<string>();
     for (const c of components) {
-      const { coinGeckoId } = resolveCoinGeckoId(c, tokenMap);
+      const { coinGeckoId } = resolveCoinGeckoId(c, tokenMap, multiProvider);
       if (coinGeckoId) ids.add(coinGeckoId);
     }
     return Array.from(ids).sort();
-  }, [components, tokenMap]);
+  }, [components, tokenMap, multiProvider]);
   const { prices: priceMap } = useTokenPricesByIds(feeCoinGeckoIds);
 
   // `null` when any component is unpriced — caller falls back to the
   // raw token list rather than displaying a misleading partial sum.
   const feeUsd = useMemo(
-    () => getTotalFeeUsd(components, tokenMap, priceMap),
-    [components, tokenMap, priceMap],
+    () => getTotalFeeUsd(components, tokenMap, priceMap, multiProvider),
+    [components, tokenMap, priceMap, multiProvider],
   );
   const feeUsdText = feeUsd != null && feeUsd > 0 ? formatUsd(feeUsd, true) : null;
   const pctText = feeUsd != null && inputUsd != null ? getFeePercentage(feeUsd, inputUsd) : null;

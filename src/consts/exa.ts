@@ -1,0 +1,3 @@
+export const EXA_TOKEN_ADDRESS = '0x1e925De1c68ef83bD98eE3E130eF14a50309C01B';
+export const EXA_ROUTER_ADDRESS = '0x12eDAc9B50F1014997c1bddAD23Df58b6d82De3B';
+export const EXA_WARP_ROUTE_ID = 'EXA/base-optimism';
